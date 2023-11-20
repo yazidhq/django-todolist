@@ -1,0 +1,112 @@
+{% extends 'base/base.html' %}
+
+{% block page %}
+
+<section class="vh-100" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-lg-9 col-xl-7">
+                <div class="card rounded-3">
+                    <div class="card-body p-4">
+        
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'added_item' in message.extra_tags %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                            {% if 'error_item' in message.extra_tags %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                            {% if 'deleted_item' in message.extra_tags %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+
+                    <h4 class="text-center my-3 pb-3"><strong>To Do App with Django</strong></h4>
+        
+                    <form method="POST" action="{% url 'home' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.as_p }}
+                        </div>
+                    </form>
+        
+                    <table class="table mb-4">
+                        <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Todo item</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if items %}
+                            {% for item in items %}
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>
+                                    {% if single_item.id == item.id %}
+                                        <form method="POST" action="{% url 'update_item' item.id %}">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                {{ form.as_p }}
+                                            </div>
+                                            <button type="submit" class="btn btn-success btn-sm ms-1">Save Update</button>
+                                        </form>
+                                    {% else %}
+                                        {{ item.item }}
+                                    {% endif %}
+                                </td>
+
+                                {% if item.status == 0 %}
+                                    <td>In Progress</td>
+                                {% else %}
+                                    <td>Finished</td>
+                                {% endif %}
+
+                                <td>
+                                <a href="{% url 'delete_item' item.id %}" type="submit" class="btn btn-danger btn-sm">Delete</a>
+                                
+                                {% if item.status == 0 %}
+                                    <a href="{% url 'progress_item' item.id %}" type="submit" class="btn btn-success btn-sm ms-1">Finished</a>
+                                {% else %}
+                                    <a href="{% url 'progress_item' item.id %}" type="submit" class="btn btn-success btn-sm ms-1">Unfinished</a>
+                                {% endif %}
+
+                                {% if single_item.id == item.id %}
+                                    <p></p>
+                                {% else %}
+                                    <a href="{% url 'update_item' item.id %}" type="submit" class="btn btn-warning btn-sm ms-1">Edit</a>
+                                {% endif %}
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
+
+                    {% if single_item %}
+                        <a href="{% url 'home' %}" class="text-decoration-none">Back</a>
+                    {% endif %}
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
