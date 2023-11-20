@@ -20,7 +20,7 @@ def home(request):
             return redirect('home')
     else:
         data = {
-            'items': Todolist.objects.all(),
+            'items': Todolist.objects.all().order_by('-created_at'),
             'form': ItemForm(request.POST),
         }
         return render(request, 'home.html', data)
@@ -37,7 +37,7 @@ def update_item(request, id_item):
     current_item = Todolist.objects.get(id=id_item)
     form = ItemForm(request.POST or None, instance=current_item)
     data = {
-        'items': Todolist.objects.all(),
+        'items': Todolist.objects.all().order_by('-created_at'),
         'form': form,
         'single_item': Todolist.objects.get(id=id_item),
     }
